@@ -7,11 +7,10 @@ const roomSchema = new mongoose.Schema(
     subject:     { type: String, required: true },
     isPrivate:   { type: Boolean, default: false },
     coverImage:  { type: String, default: '' },
-    // one-to-many owner: User → Room (owner)
     owner:       { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    // many-to-many members: Users ↔ Rooms
     members:     [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     tags:        [{ type: String }],
+    pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );
