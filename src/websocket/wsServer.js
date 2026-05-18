@@ -60,14 +60,15 @@ function initWebSocket(server) {
           break;
         }
 
-        case 'delete_message': {
-          const { roomId, messageId } = data;
-          broadcastToRoom(roomId, {
-            type: 'delete_message',
-            messageId,
-          }, clientInfo.ws);
-          break;
-        }
+case 'delete_message': {
+  const { roomId, messageId } = data;
+  console.log('delete_message received, roomId:', roomId, 'messageId:', messageId, 'members:', rooms.get(roomId)?.size)
+  broadcastToRoom(roomId, {
+    type: 'delete_message',
+    messageId,
+  }, clientInfo.ws);
+  break;
+}
 
         case 'leave_room': {
           leaveRoom(clientInfo);
@@ -75,20 +76,19 @@ function initWebSocket(server) {
         }
 
         case 'chat_message': {
-          const { roomId, content } = data;
-          console.log('chat_message from:', clientInfo.username, 'roomId:', roomId)
-          console.log('room exists:', rooms.has(roomId), 'members:', rooms.get(roomId)?.size)
-          broadcastToRoom(roomId, {
-            type: 'chat_message',
-            message: {
-              content,
-              sender: { _id: clientInfo.userId, username: clientInfo.username, avatar: clientInfo.avatar },
-              createdAt: new Date().toISOString(),
-              room: roomId,
-            },
-          }, clientInfo.ws);
-          break;
-        }
+  const { roomId, content, messageId } = data;
+  broadcastToRoom(roomId, {
+    type: 'chat_message',
+    message: {
+      _id: messageId,
+      content,
+      sender: { _id: clientInfo.userId, username: clientInfo.username, avatar: clientInfo.avatar },
+      createdAt: new Date().toISOString(),
+      room: roomId,
+    },
+  }, clientInfo.ws);
+  break;
+}
 
         case 'note_update': {
           const { roomId, noteId, content, title } = data;
