@@ -13,21 +13,23 @@ https://backend-final-fullstack.onrender.com
 - Jest + Supertest (testing)
 
 ## 📁 Project Structure
+```text
 backend/
 ├── src/
-│   ├── models/          # Mongoose models (User, Room, Note, Message, FileAttachment)
-│   ├── routes/          # Express routes (auth, rooms, notes, messages, files)
-│   ├── middleware/       # JWT auth middleware
-│   ├── utils/           # Helper functions
-│   └── websocket/       # WebSocket server
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── utils/
+│   └── websocket/
 ├── tests/
-│   ├── unit/            # Unit tests
-│   └── integration/     # Integration tests
+│   ├── unit/
+│   └── integration/
 └── server.js
+```
 
 ## ⚙️ Environment Variables
 Create a `.env` file in the root:
-PORT=5002
+PORT=5002 (you can use other port what you want) 
 MONGO_URI=mongodb://localhost:27017/studyhub
 JWT_SECRET=your_secret_key
 CLIENT_URL=http://localhost:3000
