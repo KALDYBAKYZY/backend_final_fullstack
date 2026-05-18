@@ -9,7 +9,6 @@ function initWebSocket(server) {
   const wss = new WebSocket.Server({ server, path: '/ws' });
 
   wss.on('connection', async (ws, req) => {
-    // Authenticate via token in query string: /ws?token=...
     const url = new URL(req.url, 'http://localhost');
     const token = url.searchParams.get('token');
 
@@ -36,14 +35,12 @@ function initWebSocket(server) {
           
           const roomSet = rooms.get(roomId);
           
-          // Удали мёртвые соединения
           for (const client of roomSet) {
             if (client.ws.readyState !== WebSocket.OPEN) {
               roomSet.delete(client);
             }
           }
           
-          // Удали старую запись этого же юзера если есть
           for (const client of roomSet) {
             if (client.userId === clientInfo.userId) {
               roomSet.delete(client);
@@ -94,13 +91,12 @@ function initWebSocket(server) {
         }
 
         case 'note_update': {
-          // Broadcast live note edits to a room
           const { roomId, noteId, content, title } = data;
           broadcastToRoom(roomId, {
             type: 'note_update',
             noteId, content, title,
             updatedBy: clientInfo.username,
-          }, clientInfo.ws);   // exclude sender
+          }, clientInfo.ws);
           break;
         }
 

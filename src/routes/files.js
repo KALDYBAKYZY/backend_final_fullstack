@@ -15,7 +15,6 @@ router.post('/', protect, async (req, res) => {
       linkedRoom: linkedRoom || null,
     });
 
-    // If linked to a note, push into note.attachments
     if (linkedNote) {
       await Note.findByIdAndUpdate(linkedNote, { $addToSet: { attachments: file._id } });
     }

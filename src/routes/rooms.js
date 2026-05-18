@@ -11,7 +11,12 @@ router.get('/', protect, async (req, res) => {
     const { search, subject } = req.query;
     const filter = {};
     if (search) filter.name = { $regex: escapeRegex(search), $options: 'i' };
-    if (subject) filter.subject = subject;
+    if (subject) {
+      filter.subject = new RegExp(
+        `^${escapeRegex(subject)}$`,
+        'i'
+      );
+    }
 const rooms = await Room.find(filter)
   .populate('owner', 'username avatar')
   .populate('members', 'username avatar')

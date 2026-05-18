@@ -10,7 +10,12 @@ router.get('/', protect, async (req, res) => {
     const { search, subject, roomId } = req.query;
     const filter = { author: req.user._id };
     if (search) filter.$text = { $search: search };
-    if (subject) filter.subject = subject;
+    if (subject) {
+      filter.subject = new RegExp(
+        `^${escapeRegex(subject)}$`,
+        'i'
+      );
+    }
     if (roomId) filter.room = roomId;
 
     const notes = await Note.find(filter)

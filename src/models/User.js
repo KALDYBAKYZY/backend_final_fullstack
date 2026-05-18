@@ -9,13 +9,11 @@ const userSchema = new mongoose.Schema(
     avatar:   { type: String, default: '' },
     bio:      { type: String, default: '', maxlength: 300 },
     role:     { type: String, enum: ['student', 'teacher', 'admin'], default: 'student' },
-    // many-to-many: rooms this user is member of
     rooms:    [{ type: mongoose.Schema.Types.ObjectId, ref: 'Room' }],
   },
   { timestamps: true }
 );
 
-// Hash password before save
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
@@ -26,7 +24,6 @@ userSchema.methods.comparePassword = async function (candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-// Never expose password
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
