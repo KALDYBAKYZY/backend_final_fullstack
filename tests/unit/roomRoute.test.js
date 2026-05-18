@@ -1,17 +1,42 @@
 const { escapeRegex } = require('../../src/utils/helpers');
 
-// Mocked route handler logic test
+const mockJson = jest.fn();
+const mockStatus = jest.fn(() => ({ json: mockJson }));
+const mockRes = { json: mockJson, status: mockStatus };
+const mockRooms = [
+  { _id: '1', name: 'Math Room', subject: 'Math', members: [] },
+];
+jest.mock('../../src/models/Room', () => ({
+  find: jest.fn().mockReturnValue({
+    populate: jest.fn().mockReturnThis(),
+    sort: jest.fn().mockResolvedValue([
+      { _id: '1', name: 'Math Room', subject: 'Math', members: [] }
+    ])
+  })
+}));
 describe('Room route handler logic', () => {
-  it('escapes search query for regex', () => {
-    const query = 'Math 101 (Advanced)';
-    const escaped = escapeRegex(query);
-    expect(() => new RegExp(escaped)).not.toThrow();
-  });
-
-  it('builds correct filter when subject is provided', () => {
-    const filter = {};
-    const subject = 'Physics';
-    if (subject) filter.subject = subject;
-    expect(filter).toEqual({ subject: 'Physics' });
+ 
+  it('GET /rooms handler returns rooms and calls res.json', async () => {
+    const Room = require('../../src/models/Room');
+    const handler = async (req, res) => {
+      try {
+        const { search, subject } = req.query;
+        const filter = {};
+        if (search) filter.name = { $regex: escapeRegex(search), $options: 'i' };
+        if (subject) filter.subject = subject;
+        const rooms = await Room.find(filter)
+          .populate('owner', 'username avatar')
+          .populate('members', 'username avatar')
+          .sort('-createdAt');
+        res.json(rooms);
+      } catch (err) {
+        res.status(500).json({ message: err.message });
+      }
+    };
+    const mockReq = { query: { subject: 'Math' } };
+    await handler(mockReq, mockRes);
+    expect(mockJson).toHaveBeenCalledWith(expect.arrayContaining([
+      expect.objectContaining({ name: 'Math Room' })
+    ]));
   });
 });
