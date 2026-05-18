@@ -4,7 +4,7 @@ const Room = require('../models/Room');
 const { protect } = require('../middleware/auth');
 const router = express.Router();
 
-// GET /api/messages/:roomId  — paginated history
+// GET /api/messages/:roomId
 router.get('/:roomId', protect, async (req, res) => {
   try {
     const room = await Room.findById(req.params.roomId);
