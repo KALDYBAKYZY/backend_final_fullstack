@@ -3,9 +3,7 @@ const { escapeRegex } = require('../../src/utils/helpers');
 const mockJson = jest.fn();
 const mockStatus = jest.fn(() => ({ json: mockJson }));
 const mockRes = { json: mockJson, status: mockStatus };
-const mockRooms = [
-  { _id: '1', name: 'Math Room', subject: 'Math', members: [] },
-];
+
 jest.mock('../../src/models/Room', () => ({
   find: jest.fn().mockReturnValue({
     populate: jest.fn().mockReturnThis(),
